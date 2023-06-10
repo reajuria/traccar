@@ -69,6 +69,7 @@ public class RedisBroadcastService extends BaseBroadcastService {
         try {
             String payload = id  + ":" + objectMapper.writeValueAsString(message);
             publisher.publish(channel, payload);
+            LOGGER.info("Broadcasted message: {}", payload);
         } catch (IOException e) {
             LOGGER.warn("Broadcast failed", e);
         } catch (JedisConnectionException e) {
@@ -112,7 +113,8 @@ public class RedisBroadcastService extends BaseBroadcastService {
                         try {
                             String[] parts = message.split(":", 2);
                             if (messageChannel == channel && parts.length == 2 && !id.equals(parts[0])) {
-                                handleMessage(objectMapper.readValue(parts[1], BroadcastMessage.class));
+                                LOGGER.info("Received message: {}", message);
+                                handleMessage(false, objectMapper.readValue(parts[1], BroadcastMessage.class));
                             }
                         } catch (IOException e) {
                             LOGGER.warn("Broadcast handleMessage failed", e);
