@@ -43,18 +43,14 @@ public abstract class BaseBroadcastService implements BroadcastService {
     public void updateDevice(boolean local, Device device) {
         BroadcastMessage message = new BroadcastMessage();
         message.setDevice(device);
-        if (local) {
-            sendMessage(message);
-        }
+        sendMessage(message);
     }
 
     @Override
     public void updatePosition(boolean local, Position position) {
         BroadcastMessage message = new BroadcastMessage();
         message.setPosition(position);
-        if (local) {
-            sendMessage(message);
-        }
+        sendMessage(message);
     }
 
     @Override
@@ -62,27 +58,21 @@ public abstract class BaseBroadcastService implements BroadcastService {
         BroadcastMessage message = new BroadcastMessage();
         message.setUserId(userId);
         message.setEvent(event);
-        if (local) {
-            sendMessage(message);
-        }
+        sendMessage(message);
     }
 
     @Override
     public void updateCommand(boolean local, long deviceId) {
         BroadcastMessage message = new BroadcastMessage();
         message.setCommandDeviceId(deviceId);
-        if (local) {
-            sendMessage(message);
-        }
+        sendMessage(message);
     }
 
     @Override
     public void invalidateObject(boolean local, Class<? extends BaseModel> clazz, long id) {
         BroadcastMessage message = new BroadcastMessage();
         message.setChanges(Map.of(Permission.getKey(clazz), id));
-        if (local) {
-            sendMessage(message);
-        }
+        sendMessage(message);
     }
 
     @Override
@@ -92,22 +82,20 @@ public abstract class BaseBroadcastService implements BroadcastService {
             Class<? extends BaseModel> clazz2, long id2) {
         BroadcastMessage message = new BroadcastMessage();
         message.setChanges(Map.of(Permission.getKey(clazz1), id1, Permission.getKey(clazz2), id2));
-        if (local) {
-            sendMessage(message);
-        }
+        sendMessage(message);
     }
 
     protected abstract void sendMessage(BroadcastMessage message);
 
-    protected void handleMessage(Boolean local, BroadcastMessage message) {
+    protected void handleMessage(BroadcastMessage message) {
         if (message.getDevice() != null) {
-            listeners.forEach(listener -> listener.updateDevice(local, message.getDevice()));
+            listeners.forEach(listener -> listener.updateDevice(false, message.getDevice()));
         } else if (message.getPosition() != null) {
-            listeners.forEach(listener -> listener.updatePosition(local, message.getPosition()));
+            listeners.forEach(listener -> listener.updatePosition(false, message.getPosition()));
         } else if (message.getUserId() != null && message.getEvent() != null) {
-            listeners.forEach(listener -> listener.updateEvent(local, message.getUserId(), message.getEvent()));
+            listeners.forEach(listener -> listener.updateEvent(false, message.getUserId(), message.getEvent()));
         } else if (message.getCommandDeviceId() != null) {
-            listeners.forEach(listener -> listener.updateCommand(local, message.getCommandDeviceId()));
+            listeners.forEach(listener -> listener.updateCommand(false, message.getCommandDeviceId()));
         } else if (message.getChanges() != null) {
             var iterator = message.getChanges().entrySet().iterator();
             if (iterator.hasNext()) {
@@ -115,12 +103,12 @@ public abstract class BaseBroadcastService implements BroadcastService {
                 if (iterator.hasNext()) {
                     var second = iterator.next();
                     listeners.forEach(listener -> listener.invalidatePermission(
-                            local,
+                            false,
                             Permission.getKeyClass(first.getKey()), first.getValue(),
                             Permission.getKeyClass(second.getKey()), second.getValue()));
                 } else {
                     listeners.forEach(listener -> listener.invalidateObject(
-                            local,
+                            false,
                             Permission.getKeyClass(first.getKey()), first.getValue()));
                 }
             }
