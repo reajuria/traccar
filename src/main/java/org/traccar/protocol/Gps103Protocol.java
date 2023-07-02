@@ -39,6 +39,7 @@ public class Gps103Protocol extends BaseProtocol {
                 Command.TYPE_ENGINE_RESUME,
                 Command.TYPE_ALARM_ARM,
                 Command.TYPE_ALARM_DISARM,
+                Command.TYPE_ALARM_SPEED,
                 Command.TYPE_REQUEST_PHOTO);
         addServer(new TrackerServer(config, getName(), false) {
             @Override
