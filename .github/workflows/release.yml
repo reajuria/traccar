@@ -58,4 +58,13 @@ jobs:
         env:
           S3_ACCESS_KEY: ${{ secrets.S3_ACCESS_KEY }}
           S3_SECRET_KEY: ${{ secrets.S3_SECRET_KEY }}
-        run: s3cmd --acl-public put traccar-*.zip s3://traccar-reajuria/builds/ --host=nyc3.digitaloceanspaces.com --host-bucket=traccar-reajuria --access_key="$S3_ACCESS_KEY" --secret_key="$S3_SECRET_KEY"
+        run: |
+          s3cmd --acl-public put traccar-*.zip s3://traccar-reajuria/builds/ --host=nyc3.digitaloceanspaces.com --host-bucket=traccar-reajuria --access_key="$S3_ACCESS_KEY" --secret_key="$S3_SECRET_KEY"
+          cp ./traccar-other-${{ github.event.inputs.version }}.zip ./traccar-other.zip
+      - name: Build and Publish Ubuntu Docker image
+        uses: pmorelli92/github-container-registry-build-push@2.1.0
+        with:
+          github-push-secret: ${{secrets.GITHUB_TOKEN}}
+          docker-image-name: traccar
+          docker-image-tag: ${{github.event.inputs.version}}-ubuntu
+          dockerfile-path: ./docker/Dockerfile.ubuntu
