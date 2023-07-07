@@ -113,6 +113,7 @@ public class RedisBroadcastService extends BaseBroadcastService {
                             String[] parts = message.split(":", 2);
                             if (messageChannel.equals(channel) && parts.length == 2 && !id.equals(parts[0])) {
                                 handleMessage(objectMapper.readValue(parts[1], BroadcastMessage.class));
+                                LOGGER.debug("Handled message {}", parts[1]);
                             }
                         } catch (IOException e) {
                             LOGGER.warn("Broadcast handleMessage failed", e);
