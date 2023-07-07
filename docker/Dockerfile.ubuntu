@@ -2,7 +2,7 @@ FROM adoptopenjdk:11-jre-hotspot-focal
 
 WORKDIR /opt/traccar
 
-COPY ./setup/traccar-other.zip:/tmp
+COPY ./setup/traccar-other.zip /tmp
 
 RUN set -ex && \
     apt-get update &&\
