@@ -10,6 +10,7 @@ on:
 
 jobs:
   build:
+
     runs-on: ubuntu-22.04
 
     steps:
@@ -17,7 +18,7 @@ jobs:
         with:
           fetch-depth: 0
           submodules: true
-      - run: git checkout master
+      - run: git checkout ${{ github.ref_name }}
         working-directory: ./traccar-web
       - uses: actions/setup-java@v3
         with:
@@ -51,10 +52,10 @@ jobs:
           wget -q https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.6+10/OpenJDK17U-jdk_x64_linux_hotspot_17.0.6_10.tar.gz
           wget -q https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.6+10/OpenJDK17U-jdk_arm_linux_hotspot_17.0.6_10.tar.gz
           wget -q https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.6+10/OpenJDK17U-jdk_aarch64_linux_hotspot_17.0.6_10.tar.gz
-          ./package.sh ${{ github.event.inputs.version }} other
+          ./package.sh ${{ github.event.inputs.version }}
       - name: Upload installers
         working-directory: ./setup
         env:
           S3_ACCESS_KEY: ${{ secrets.S3_ACCESS_KEY }}
           S3_SECRET_KEY: ${{ secrets.S3_SECRET_KEY }}
-        run: s3cmd --acl-public put traccar-*.zip s3://reajuria-preview/builds/ --host=nyc3.digitaloceanspaces.com --host-bucket=reajuria-preview --access_key="$S3_ACCESS_KEY" --secret_key="$S3_SECRET_KEY"
+        run: s3cmd --acl-public put traccar-*.zip s3://traccar-reajuria/builds/ --host=nyc3.digitaloceanspaces.com --host-bucket=traccar-reajuria --access_key="$S3_ACCESS_KEY" --secret_key="$S3_SECRET_KEY"
